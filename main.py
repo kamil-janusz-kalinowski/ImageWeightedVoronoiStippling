@@ -1,9 +1,3 @@
-import numpy as np
-from scipy.spatial import Voronoi, voronoi_plot_2d
-from scripts.voronoi import voronoi_finite_polygons_2d
-from scripts.math import generate_points, convert_ind_to_coords, get_points_inside_polygon, calc_center_of_mass, interpolate_matrices
-from scripts.displaying import display_regions
-import matplotlib.pyplot as plt
 
 # #-----------------------------------
 # points = np.array([[0, 0], [0, 1], [0, 2], [1, 0], [1, 1], [1, 2],
@@ -61,14 +55,6 @@ import matplotlib.pyplot as plt
 #     plt.show()
 #-----------------------------------
 
-# def create_gradient(width=300, height=300):
-#     """
-#     Create a gradient image of specified width and height.
-#     """
-#     gradient = np.linspace(0, 1, height)  # generate values from 0 to 1
-#     gradient = np.repeat(gradient[:, np.newaxis], width, axis=1)  # repeat gradient for each column
-#     return gradient
-
 # num_points = 10
 # width = 300
 # height = 300
@@ -109,58 +95,89 @@ import matplotlib.pyplot as plt
 from PIL import Image
 import io
 import imageio
+from scripts.animation import get_current_plot_as_img, save_frames_as_gif
 
-def calc_centroids_of_regions(regions, vertices, img_gray):
-    centroids = []
-    for region in regions:
-        polygon = vertices[region]
-        points_inside_polygon = get_points_inside_polygon(polygon, img_gray.shape[1], img_gray.shape[0])
-        mass = img_gray[points_inside_polygon[:, 1], points_inside_polygon[:, 0]] + 1
-        mask_center_mass = calc_center_of_mass(points_inside_polygon, mass)
-        centroids.append(mask_center_mass)
-        
-    return centroids
 
-num_points = 30
-width = 300
-height = 300
-iterations = 40
+# num_points = 5
+# width = 300
+# height = 300
+# iterations = 200
 
-img_gray = np.zeros((height, width))
+# #img_gray = np.zeros((height, width))
+# img_gray = np.exp(create_gradient(width, height))**3
 
-points = generate_points(num_points, width, height)
+# points = generate_points(num_points, width, height)
 
-frames = []
-for ii in range(iterations):
+# frames = []
+# for ii in range(iterations):
     
+#     vor = Voronoi(points)
+#     regions, vertices = voronoi_finite_polygons_2d(vor, max(width, height))
+#     centroids = calc_centroids_of_regions(regions, vertices, img_gray)
+    
+#     points = interpolate_matrices(points, centroids, 1) # move points towards centroids
+    
+#     # Tutaj umieść kod do aktualizacji obrazu
+#     #plt.imshow(img_gray, cmap='gray')
+#     plt.plot(points[:, 0], points[:, 1], 'ro')
+    
+#     for region in regions:
+#         polygon = vertices[region]
+#         polygon_stacked = np.vstack((polygon, polygon[0]))
+#         plt.plot(polygon_stacked[:, 0], polygon_stacked[:, 1], 'b-')
+    
+#     plt.xlim(0, width)
+#     plt.ylim(0, height)
+    
+#     plt.pause(0.01)
+#     #plt.waitforbuttonpress()
+    
+#     frame = get_current_plot_as_img()
+#     frames.append(np.array(frame))
+#     plt.clf()
+    
+# save_frames_as_gif(frames, 'voronoi.gif', fps=5, loop=0)
+
+#-----------------------------------
+
+# num_points = 1000
+# img_gray = np.array(Image.open('materials\GCfAabyWQAAIcnJ.jpeg').convert('L'))
+
+# points = generate_points_from_img(img_gray, num_points)
+
+# plt.imshow(img_gray, cmap='gray')
+# plt.plot(points[:, 0], points[:, 1], 'b.')
+# plt.show()
+
+#-----------------------------------
+import numpy as np
+from scripts.math import generate_points_from_img, interpolate_matrices
+import matplotlib.pyplot as plt
+from scripts.voronoi import voronoi_finite_polygons_2d, calc_centroids_of_regions
+from scipy.spatial import Voronoi
+
+num_points = 200
+img_gray = np.array(Image.open('materials\cup_1.png').convert('L'))
+
+points = generate_points_from_img(img_gray, num_points)
+
+# # Show image and points
+# plt.imshow(img_gray, cmap='gray')
+# plt.plot(points[:, 0], points[:, 1], 'b.')
+# plt.show()
+
+iter_num = 100
+for ii in range(iter_num):
     vor = Voronoi(points)
-    regions, vertices = voronoi_finite_polygons_2d(vor, max(width, height))
+    regions, vertices = voronoi_finite_polygons_2d(vor, max(img_gray.shape))
     centroids = calc_centroids_of_regions(regions, vertices, img_gray)
     
-    points = interpolate_matrices(points, centroids, 0.7) # move points towards centroids
+    points = interpolate_matrices(points, centroids, 0.5) # move points towards centroids
     
-    # Tutaj umieść kod do aktualizacji obrazu
-    #plt.imshow(img_gray, cmap='gray')
-    plt.plot(points[:, 0], points[:, 1], 'ro')
-    
-    for region in regions:
-        polygon = vertices[region]
-        polygon_stacked = np.vstack((polygon, polygon[0]))
-        plt.plot(polygon_stacked[:, 0], polygon_stacked[:, 1], 'b-')
-    
-    plt.xlim(0, width)
-    plt.ylim(0, height)
-    
-    plt.pause(0.01)
-    #plt.waitforbuttonpress()
-    
-    # Zapisywanie obrazu do zmiennej
-    buf = io.BytesIO()
-    plt.savefig(buf, format='png')
-    buf.seek(0)
-    frame = Image.open(buf)
-    frames.append(np.array(frame))
+    # Show image and points
+    plt.imshow(img_gray, cmap='gray')
+    plt.plot(points[:, 0], points[:, 1], 'b.')
+    #plt.pause(0.01)
     plt.clf()
     
-imageio.mimsave('voronoi.gif', frames, duration=0.1, loop=0)
-
+    

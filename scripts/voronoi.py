@@ -1,8 +1,9 @@
 import numpy as np
 from scipy.spatial import Voronoi, voronoi_plot_2d
 import matplotlib.pyplot as plt
+from scripts.math import get_points_inside_polygon, calc_center_of_mass
 
-def voronoi_finite_polygons_2d(vor, radius=None):
+def voronoi_finite_polygons_2d(vor: Voronoi, radius=None):
     """
     Reconstruct infinite voronoi regions in a 2D diagram to finite
     regions.
@@ -65,6 +66,17 @@ def voronoi_finite_polygons_2d(vor, radius=None):
         new_regions.append(new_region.tolist())
 
     return new_regions, np.asarray(new_vertices)
+
+def calc_centroids_of_regions(regions, vertices, img_gray):
+    centroids = []
+    for region in regions:
+        polygon = vertices[region]
+        points_inside_polygon = get_points_inside_polygon(polygon, img_gray.shape[1], img_gray.shape[0])
+        mass = img_gray[points_inside_polygon[:, 1], points_inside_polygon[:, 0]]
+        mask_center_mass = calc_center_of_mass(points_inside_polygon, mass)
+        centroids.append(mask_center_mass)
+        
+    return centroids
 
 if __name__ == '__main__':
     # usage
