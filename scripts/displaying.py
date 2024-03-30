@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from scipy.spatial import voronoi_plot_2d
 
 def display_regions(vor, regions, vertices, points):
-    # Wyswietl regiony
+    # Display the Voronoi diagram with finite regions filled in
     fig, ax = plt.subplots()
     voronoi_plot_2d(vor, ax)
     for region in regions:

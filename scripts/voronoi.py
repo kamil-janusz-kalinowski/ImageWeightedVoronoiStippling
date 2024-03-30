@@ -85,7 +85,7 @@ if __name__ == '__main__':
     vor = Voronoi(points)
     regions, vertices = voronoi_finite_polygons_2d(vor)
 
-    # Wyswietl regiony
+    # Display the Voronoi diagram with finite regions filled in
     fig, ax = plt.subplots()
     voronoi_plot_2d(vor, ax)
     for region in regions:
