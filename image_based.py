@@ -24,7 +24,7 @@ points = generate_points_from_img(img_gray, num_points)
 # plt.plot(points[:, 0], points[:, 1], 'b.')
 # plt.show()
 
-iter_num = 100
+iter_num = 60
 for ii in range(iter_num):
     vor = Voronoi(points)
     regions, vertices = voronoi_finite_polygons_2d(vor, max(img_gray.shape))

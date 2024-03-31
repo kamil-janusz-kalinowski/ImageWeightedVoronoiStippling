@@ -16,7 +16,7 @@ import numpy as np
 num_points = 20
 width = 300
 height = 300
-iterations = 200
+iterations = 30
 
 img_gray = np.zeros((height, width))
 
