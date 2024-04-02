@@ -1,7 +1,7 @@
 import numpy as np
-from scipy.spatial import Voronoi, voronoi_plot_2d
+from scipy.spatial import Voronoi, voronoi_plot_2d, cKDTree
 import matplotlib.pyplot as plt
-from scripts.math import get_points_inside_polygon, calc_center_of_mass
+from scripts.math_custom import get_points_inside_polygon, calc_center_of_mass, calc_polygon_center
 
 def voronoi_finite_polygons_2d(vor: Voronoi, radius=None):
     """
@@ -77,6 +77,40 @@ def calc_centroids_of_regions(regions, vertices, img_gray):
         centroids.append(mask_center_mass)
         
     return centroids
+
+def calc_centroids_of_regions2(regions, vertices, img_gray):
+    centers_region = []
+    for region in regions:
+        polygon = vertices[region]
+        center = calc_polygon_center(polygon)
+        centers_region.append(center)
+    
+    pos_pixels = np.array([[x, y] for x in range(img_gray.shape[1]) for y in range(img_gray.shape[0])])
+    indices = assign_points_to_regions(pos_pixels, centers_region)
+    
+    centroids = []
+    for ind, center in enumerate(centers_region):
+        points_inside_polygon = pos_pixels[indices == ind]
+        
+        if points_inside_polygon.size == 0:
+            centroids.append([])
+            continue
+        
+        mass = img_gray[points_inside_polygon[:, 1], points_inside_polygon[:, 0]]
+        centroid = calc_center_of_mass(points_inside_polygon, mass)
+        centroids.append(centroid)
+        
+    return centroids
+    
+# Faster version of calc_centroids_of_regions using scipy.spatial.cKDTree
+def assign_points_to_regions(points, region_centers): 
+    # Tworzenie drzewa KD z centrami regionów
+    tree = cKDTree(region_centers)
+
+    # Znajdowanie najbliższego centrum regionu dla każdego punktu
+    _, indices = tree.query(points)
+
+    return indices
 
 if __name__ == '__main__':
     # usage

@@ -46,3 +46,20 @@ def create_gradient(width=300, height=300):
     gradient = np.repeat(gradient[:, np.newaxis], width, axis=1)  # repeat gradient for each column
     return gradient
 
+
+def calc_polygon_center(vertices):
+    # Wierzchołki muszą być w formacie: [[x1, y1], [x2, y2], ...]
+    area = 0.0
+    x_center = 0.0
+    y_center = 0.0
+
+    for i in range(-1, len(vertices) - 1):
+        temp = vertices[i][0] * vertices[i + 1][1] - vertices[i + 1][0] * vertices[i][1]
+        area += temp
+        x_center += (vertices[i][0] + vertices[i + 1][0]) * temp
+        y_center += (vertices[i][1] + vertices[i + 1][1]) * temp
+
+    area *= 0.5
+    x_center /= (6.0 * area)
+    y_center /= (6.0 * area)
+    return [x_center, y_center]
