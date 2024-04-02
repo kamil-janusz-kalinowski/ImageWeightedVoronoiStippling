@@ -9,10 +9,4 @@ This script generates a dynamic Voronoi diagram from a set of points. It starts 
 ## image_based.py: 
 This script uses an image to generate a dynamic Voronoi diagram. It starts by opening an image and converting it to grayscale. Then, it generates an initial set of points based on the grayscale image. In each iteration, it calculates the Voronoi diagram for the current points, identifies the finite polygons of the Voronoi diagram, calculates the centroids of these regions, and moves the points towards the centroids. The updated Voronoi diagram is visualized in each iteration by overlaying the points on the grayscale image. The visualization is cleared at the end of each iteration to prepare for the next one.
 
-The repository also includes several helper scripts in the scripts directory for tasks such as animation, math operations, and Voronoi calculations.
-
-### Requirements:
-- PIL (Pillow)
-- NumPy
-- Matplotlib
-- SciPy
+![voronoi_simulation](https://github.com/kamil-janusz-kalinowski/ImageWeightedVoronoiStippling/assets/143912944/a34783ba-cd9c-4756-a90e-b3fdb0689a07)
